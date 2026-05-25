@@ -216,11 +216,7 @@
     <span class="stat-dot">·</span>
     <span class="num" id="months">0</span> 月
     <span class="stat-dot">·</span>
-    <span class="num" id="weeks">0</span> 周
-    <span class="stat-dot">·</span>
-    <span class="num" id="hours">0</span> 小时
-    <span class="stat-dot">·</span>
-    <span class="num" id="minutes">0</span> 分钟
+    <span class="num" id="weeks">0</span> 周<span class="stat-dot">·</span><span class="num" id="days">0</span> 天<span class="stat-dot">·</span><span class="num" id="hours">0</span> 小时<span class="stat-dot">·</span><span class="num" id="minutes">0</span> 分钟<span class="stat-dot">·</span><span class="num" id="seconds">0</span> 秒
   </div>
   <div class="countdown-box">
     🌸 距离我们的下一个纪念日还有<br>
@@ -332,9 +328,13 @@ function update() {
   }
   document.getElementById('years').textContent = years;
   document.getElementById('months').textContent = months;
-  document.getElementById('weeks').textContent = Math.floor(totalDays / 7);
-  document.getElementById('hours').textContent = Math.floor(diffMs / 3600000).toLocaleString();
-  document.getElementById('minutes').textContent = Math.floor(diffMs / 60000).toLocaleString();
+  const remainderMs = now - cursor;
+  const remainderDays = Math.floor(remainderMs / MS_DAY);
+  document.getElementById('weeks').textContent = Math.floor(remainderDays / 7);
+  document.getElementById('days').textContent = remainderDays % 7;
+  document.getElementById('hours').textContent = Math.floor((remainderMs % MS_DAY) / 3600000);
+  document.getElementById('minutes').textContent = Math.floor((remainderMs % 3600000) / 60000);
+  document.getElementById('seconds').textContent = Math.floor((remainderMs % 60000) / 1000);
   const nextAnni = anniThisYear <= now ? new Date(now.getFullYear() + 1, START_DATE.getMonth(), START_DATE.getDate(), 12, 0, 0) : anniThisYear;
   document.getElementById('countdown').textContent = Math.ceil((nextAnni - now) / MS_DAY) + ' 天';
 }

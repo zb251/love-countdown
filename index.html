@@ -374,9 +374,6 @@ setInterval(update, 1000);
 	  e.stopPropagation();
 	  toggleMusic();
 	});
-	document.addEventListener("click", function(e) {
-	  if (e.target !== musicBtn && !playing && !loading) toggleMusic();
-	});
 </script>
 </body>
 </html>

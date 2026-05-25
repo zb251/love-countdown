@@ -336,32 +336,41 @@ update();
 setInterval(update, 1000);
 
 // music
-const audio = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicBtn');
-const noteEl = musicBtn.querySelector('.note');
-let playing = false;
-audio.src = MUSIC_FILE;
-function toggleMusic() {
-  if (playing) {
-    audio.pause();
-    playing = false;
-    musicBtn.classList.remove('playing');
-    noteEl.textContent = '🎵';
-  } else {
-    audio.play().then(() => {
-      playing = true;
-      musicBtn.classList.add('playing');
-      noteEl.textContent = '🎶';
-    }).catch(() => {});
-  }
-}
-musicBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  toggleMusic();
-});
-document.addEventListener('click', function(e) {
-  if (e.target !== musicBtn && !playing) toggleMusic();
-});
+	const audio = document.getElementById("bgMusic");
+	const musicBtn = document.getElementById("musicBtn");
+	const noteEl = musicBtn.querySelector(".note");
+	let playing = false;
+	let loading = false;
+	audio.src = MUSIC_FILE;
+	audio.load();
+	function toggleMusic() {
+	  if (playing) {
+	    audio.pause();
+	    playing = false;
+	    musicBtn.classList.remove("playing");
+	    noteEl.textContent = "🎵";
+	  } else if (!loading) {
+	    loading = true;
+	    noteEl.textContent = "⏳";
+	    musicBtn.classList.add("playing");
+	    audio.play().then(() => {
+	      playing = true;
+	      loading = false;
+	      noteEl.textContent = "🎶";
+	    }).catch(() => {
+	      loading = false;
+	      musicBtn.classList.remove("playing");
+	      noteEl.textContent = "🎵";
+	    });
+	  }
+	}
+	musicBtn.addEventListener("click", (e) => {
+	  e.stopPropagation();
+	  toggleMusic();
+	});
+	document.addEventListener("click", function(e) {
+	  if (e.target !== musicBtn && !playing && !loading) toggleMusic();
+	});
 </script>
 </body>
 </html>

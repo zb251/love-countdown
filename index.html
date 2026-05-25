@@ -320,12 +320,18 @@ function update() {
   const diffMs = now - START_DATE;
   const totalDays = Math.floor(diffMs / MS_DAY);
   document.getElementById('totalDays').textContent = totalDays.toLocaleString();
-  const years = now.getFullYear() - START_DATE.getFullYear();
   const anniThisYear = new Date(now.getFullYear(), START_DATE.getMonth(), START_DATE.getDate(), 12, 0, 0);
   const lastAnni = anniThisYear <= now ? anniThisYear : new Date(now.getFullYear() - 1, START_DATE.getMonth(), START_DATE.getDate(), 12, 0, 0);
-  const daysSinceAnni = Math.floor((now - lastAnni) / MS_DAY);
+  let years = now.getFullYear() - START_DATE.getFullYear();
+  if (anniThisYear > now) years--;
+  let months = 0, cursor = new Date(lastAnni);
+  while (true) {
+    const next = new Date(cursor.getFullYear(), cursor.getMonth() + 1, cursor.getDate(), 12, 0, 0);
+    if (next > now) break;
+    months++; cursor = next;
+  }
   document.getElementById('years').textContent = years;
-  document.getElementById('months').textContent = Math.floor(daysSinceAnni / 30);
+  document.getElementById('months').textContent = months;
   document.getElementById('weeks').textContent = Math.floor(totalDays / 7);
   document.getElementById('hours').textContent = Math.floor(diffMs / 3600000).toLocaleString();
   document.getElementById('minutes').textContent = Math.floor(diffMs / 60000).toLocaleString();

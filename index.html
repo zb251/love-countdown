@@ -342,21 +342,29 @@ setInterval(update, 1000);
 const audio = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicBtn');
 const noteEl = musicBtn.querySelector('.note');
-let musicReady = false;
+let playing = false;
 audio.src = MUSIC_FILE;
-audio.addEventListener('error', () => { musicBtn.style.display = 'none'; });
-function playMusic() {
-  audio.play().then(() => {
-    musicReady = true;
-    musicBtn.classList.add('playing');
-    noteEl.textContent = '🎶';
-  }).catch(() => {});
+function toggleMusic() {
+  if (playing) {
+    audio.pause();
+    playing = false;
+    musicBtn.classList.remove('playing');
+    noteEl.textContent = '🎵';
+  } else {
+    audio.play().then(() => {
+      playing = true;
+      musicBtn.classList.add('playing');
+      noteEl.textContent = '🎶';
+    }).catch(() => {});
+  }
 }
 musicBtn.addEventListener('click', (e) => {
   e.stopPropagation();
-  musicReady ? (audio.pause(), musicReady = false, musicBtn.classList.remove('playing'), noteEl.textContent = '🎵') : playMusic();
+  toggleMusic();
 });
-document.addEventListener('click', function() { if (!musicReady) playMusic(); });
+document.addEventListener('click', function(e) {
+  if (e.target !== musicBtn && !playing) toggleMusic();
+});
 </script>
 </body>
 </html>

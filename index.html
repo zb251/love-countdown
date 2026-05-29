@@ -535,16 +535,14 @@ function spawnPetal() {
 for (let i = 0; i < (window.innerWidth < 480 ? 8 : 16); i++) { setTimeout(spawnPetal, i * 350); }
 setInterval(spawnPetal, window.innerWidth < 480 ? 3500 : 2000);
 
+// 预加载所有照片到缓存，避免飘落时网络慢显示不出来
+PHOTOS.forEach(src => { const pre = new Image(); pre.src = src; });
+
 // falling photos
 function spawnPhoto() {
   if (PHOTOS.length === 0) return;
   const src = PHOTOS[Math.floor(Math.random() * PHOTOS.length)];
-  const wrapper = document.createElement('div');
-  wrapper.className = 'photo-wrapper';
-  wrapper.style.left = (10 + Math.random() * 80) + '%';
-  wrapper.style.top = '-100px';
-  wrapper.style.animationDuration = (10 + Math.random() * 14) + 's';
-  const img = document.createElement('img');
+  const img = new Image();
   img.className = 'photo';
   img.src = src;
   const isMobile = window.innerWidth < 480;
@@ -553,9 +551,17 @@ function spawnPhoto() {
   img.style.height = size + 'px';
   img.style.animationName = Math.random() > 0.5 ? 'photoSwayR' : 'photoSwayL';
   img.style.animationDuration = (2.5 + Math.random() * 3.5) + 's';
-  wrapper.appendChild(img);
-  document.body.appendChild(wrapper);
-  setTimeout(() => wrapper.remove(), 28000);
+  // 等图片解码完成再显示，避免空白
+  img.decode().then(() => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'photo-wrapper';
+    wrapper.style.left = (10 + Math.random() * 80) + '%';
+    wrapper.style.top = '-100px';
+    wrapper.style.animationDuration = (10 + Math.random() * 14) + 's';
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
+    setTimeout(() => wrapper.remove(), 28000);
+  }).catch(() => {});
 }
 if (PHOTOS.length > 0) {
   spawnPhoto(); spawnPhoto(); spawnPhoto();

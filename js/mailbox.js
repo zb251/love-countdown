@@ -234,6 +234,13 @@ function showCompose() {
 function openMailbox() {
   renderMailboxList();
   mailboxOverlay.style.display = 'flex';
+  // 自动滚动到第一封未读信
+  setTimeout(function() {
+    var firstNew = mailboxContainer.querySelector('.envelope.new');
+    if (firstNew) {
+      firstNew.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 100);
 }
 
 function closeMailbox() {

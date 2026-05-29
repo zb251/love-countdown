@@ -660,17 +660,14 @@ setInterval(update, 1000);
 	}
 
 	// 信箱云端同步
-	function getBlobId() { return localStorage.getItem('cloud_blob_id'); }
-	function getBlobUrl(id) { return 'https://jsonblob.com/api/jsonBlob/' + id; }
+	const CLOUD_ID = '019e73c8-adf9-72ea-9a04-e10fb35bd4ed';
+	const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 	function syncMailboxToCloud() {
-	  const id = getBlobId();
-	  if (!id) return;
-	  // 先读取现有数据，合并后写入，避免覆盖 lastVisit
-	  fetch(getBlobUrl(id))
+	  fetch(CLOUD_URL)
 	    .then(r => r.json())
 	    .then(data => {
 	      const merged = Object.assign({}, data || {}, { mailbox: mailboxLetters });
-	      return fetch(getBlobUrl(id), {
+	      return fetch(CLOUD_URL, {
 	        method: 'PUT',
 	        headers: { 'Content-Type': 'application/json' },
 	        body: JSON.stringify(merged)
@@ -678,9 +675,7 @@ setInterval(update, 1000);
 	    }).catch(() => {});
 	}
 	function syncMailboxFromCloud() {
-	  const id = getBlobId();
-	  if (!id) return;
-	  fetch(getBlobUrl(id))
+	  fetch(CLOUD_URL)
 	    .then(r => r.json())
 	    .then(data => {
 	      if (!data || !data.mailbox || !Array.isArray(data.mailbox)) return;
@@ -885,76 +880,24 @@ setInterval(update, 1000);
 	  if (!deviceId) { deviceId = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); localStorage.setItem('device_id', deviceId); }
 
 	  // --- jsonblob.com 跨设备同步 ---
-	  const BLOB_ID_KEY = 'cloud_blob_id';
-	  const API_BASE = 'https://jsonblob.com/api/jsonBlob';
-
-	  function getBlobUrl(id) { return API_BASE + '/' + id; }
-
-	  // 创建新的共享 blob
-	  async function createBlob() {
-	    try {
-	      const res = await fetch(API_BASE, {
-	        method: 'POST',
-	        headers: { 'Content-Type': 'application/json' },
-	        body: JSON.stringify({ visits: [] })
-	      });
-	      if (!res.ok) return null;
-	      const id = res.headers.get('X-jsonblob-id');
-	      if (id) {
-	        localStorage.setItem(BLOB_ID_KEY, id);
-	        return id;
-	      }
-	    } catch(e) {}
-	    return null;
-	  }
-
-	  // 获取或创建 blob ID
-	  async function getOrCreateBlobId() {
-	    let id = localStorage.getItem(BLOB_ID_KEY);
-	    if (id) return id;
-	    // 检查URL hash中是否有配对ID（对方分享的）
-	    const hash = window.location.hash.slice(1);
-	    if (hash && hash.length > 20) {
-	      // 验证这个 blob 是否存在
-	      try {
-	        const res = await fetch(getBlobUrl(hash));
-	        if (res.ok) {
-	          localStorage.setItem(BLOB_ID_KEY, hash);
-	          window.location.hash = '';
-	          return hash;
-	        }
-	      } catch(e) {}
-	    }
-	    // 创建新 blob
-	    id = await createBlob();
-	    return id;
-	  }
+	  const CLOUD_ID = '019e73c8-adf9-72ea-9a04-e10fb35bd4ed';
+	  const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 
 	  function syncToCloud() {
 	    if (!me) return;
-	    getOrCreateBlobId().then(id => {
-	      if (!id) return;
-	      // 先读取现有数据，合并后写入，避免覆盖 mailbox
-	      fetch(getBlobUrl(id))
-	        .then(r => r.json())
-	        .then(data => {
-	          const merged = Object.assign({}, data || {}, {
-	            lastVisit: { name: me, time: Date.now(), device: deviceId }
-	          });
-	          return fetch(getBlobUrl(id), {
-	            method: 'PUT',
-	            headers: { 'Content-Type': 'application/json' },
-	            body: JSON.stringify(merged)
-	          });
-	        }).catch(() => {});
-	    });
+	    fetch(CLOUD_URL)
+	      .then(r => r.json())
+	      .then(data => {
+	        const merged = Object.assign({}, data || {}, {
+	          lastVisit: { name: me, time: Date.now(), device: deviceId }
+	        });
+	        return fetch(CLOUD_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(merged) });
+	      }).catch(() => {});
 	  }
 
 	  function checkCloud() {
 	    if (!me) return;
-	    const id = localStorage.getItem(BLOB_ID_KEY);
-	    if (!id) return;
-	    fetch(getBlobUrl(id))
+	    fetch(CLOUD_URL)
 	      .then(r => r.json())
 	      .then(data => {
 	        if (!data || !data.lastVisit || !data.lastVisit.name) return;
@@ -993,23 +936,21 @@ setInterval(update, 1000);
 	    indicatorTimer = setTimeout(() => { indicator.classList.remove('visible'); dot.classList.remove('pulse'); }, 18000);
 	  }
 
-	  // 点击查看详情 / 复制配对码
+	  // 点击查看详情
 	  indicator.addEventListener('click', function() {
-	    const blobId = localStorage.getItem(BLOB_ID_KEY);
-	    const pairLink = blobId ? (window.location.origin + window.location.pathname + '#' + blobId) : '';
-	    let info = '';
-	    info += '\n📱 配对码（发给对方粘贴到浏览器）：\n' + (blobId || '未创建');
-	    if (pairLink && navigator.clipboard) {
-	      navigator.clipboard.writeText(pairLink).then(() => {
-	        alert('💓 配对链接已复制！\n\n发给对方打开一次，之后双方自动互通\n\n' + (me ? '你是：' + me : '请先点击名字选择身份'));
-	      }).catch(() => {
-	        prompt('复制这个链接发给对方，打开一次即可配对：', pairLink);
-	      });
-	    } else if (blobId) {
-	      prompt('复制这个配对码发给对方，在浏览器地址栏粘贴打开即可：', pairLink);
-	    } else {
-	      alert('💓 ' + (me ? '你是：' + me : '请先点击名字选择身份') + '\n\n配对码尚未生成，请先选择身份');
+	    const raw = localStorage.getItem('local_last_visit');
+	    let info = me ? '当前是你：' + me : '请先点击名字选择身份';
+	    if (raw) {
+	      try {
+	        const v = JSON.parse(raw);
+	        if (v.name !== me) {
+	          const d = new Date(v.time);
+	          info += '\n\n' + v.name + ' 在 ' + d.toLocaleString('zh-CN', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) + ' 来过';
+	        }
+	      } catch(e) {}
 	    }
+	    info += '\n\n✨ 双方选好身份后自动互通，无需任何操作';
+	    alert(info);
 	  });
 
 	  // 初始化
@@ -1023,18 +964,14 @@ setInterval(update, 1000);
 	  setTimeout(() => { checkCloud(); }, 2000);
 	  setInterval(() => { checkLocal(); checkCloud(); }, 20000);
 
-	  window.addEventListener('beforeunload', () => {
-	    if (me) {
-	      localStorage.setItem('local_last_visit', JSON.stringify({ name: me, time: Date.now() }));
-	      const blobId = localStorage.getItem(BLOB_ID_KEY);
-	      if (blobId) {
-	        const payload = JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId } });
-	        try { navigator.sendBeacon(getBlobUrl(blobId), new Blob([payload], {type:'application/json'})); } catch(e) {}
-	      }
-	    }
-	  });
+		window.addEventListener('beforeunload', () => {
+			if (me) {
+				localStorage.setItem('local_last_visit', JSON.stringify({ name: me, time: Date.now() }));
+				const payload = JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId } });
+				try { navigator.sendBeacon(CLOUD_URL, new Blob([payload], {type:'application/json'})); } catch(e) {}
+			}
+		});
 	})();
-
 	// --- 情绪色彩 ---
 	(function() {
 	  const MOODS = [

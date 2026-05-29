@@ -982,7 +982,6 @@ setInterval(update, 1000);
 		window.addEventListener('beforeunload', () => {
 			if (me) {
 				localStorage.setItem('local_last_visit', JSON.stringify({ name: me, time: Date.now() }));
-				try { fetch(CLOUD_URL, { method: 'PUT', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId } }) }); } catch(e) {}
 			}
 		});
 	})();

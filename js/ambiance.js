@@ -33,6 +33,8 @@ function spawnPhoto() {
   var img = document.createElement('img');
   img.className = 'photo';
   img.src = src;
+  img.loading = 'lazy';
+  img.decoding = 'async';
   var isMobile = window.innerWidth < 480;
   var size = isMobile ? (55 + Math.random() * 45) : (65 + Math.random() * 50);
   img.style.width = size + 'px';

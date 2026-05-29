@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://api.jsonblob.com">
+<link rel="dns-prefetch" href="https://api.jsonblob.com">
 <meta name="theme-color" content="#c44569">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,9 +15,16 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     font-family: 'Georgia', 'Noto Serif SC', 'STSong', serif;
     min-height: 100vh;
+    min-height: 100dvh;
     background: linear-gradient(135deg, #fce4ec 0%, #f8d7e8 25%, #fef0f5 50%, #f8d7e8 75%, #fce4ec 100%);
     background-size: 400% 400%;
     animation: bgShift 20s ease infinite;
@@ -127,6 +136,7 @@
     width: 92%;
     border: 1px solid rgba(248,165,194,0.25);
     animation: cardBreath 4s ease-in-out infinite, cardUnfold 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    will-change: transform, opacity;
   }
 
   .couple {

@@ -257,6 +257,12 @@
     animation: letterIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden; display: flex; flex-direction: column;
   }
+  /* 轮播模式时撑满全屏 */
+  .gallery-container:has(.slideshow) {
+    max-width: none; width: 100%; max-height: none; height: 100%;
+    border-radius: 0; border: none; background: transparent;
+    box-shadow: none; animation: none;
+  }
   .gallery-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 20px 24px 14px; border-bottom: 1px solid rgba(248,165,194,0.18);
@@ -280,6 +286,44 @@
   }
   .gallery-item:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(196,68,105,0.22); }
   .gallery-item img { width: 100%; display: block; }
+
+  /* 自动轮播 */
+  .slideshow {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100vh; position: relative;
+  }
+  .slideshow-img-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; width: 100%; padding: 20px;
+  }
+  .slideshow-img-wrap img {
+    max-width: 100%; max-height: 70vh; border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.35); border: 3px solid rgba(255,255,255,0.3);
+    transition: opacity 0.35s ease;
+  }
+  .slideshow-controls {
+    display: flex; align-items: center; gap: 20px; margin-bottom: 12px;
+  }
+  .slide-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15);
+    color: #fff; font-size: 28px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; backdrop-filter: blur(6px);
+  }
+  .slide-btn:hover { background: rgba(255,255,255,0.3); }
+  .slide-counter { color: rgba(255,255,255,0.85); font-size: 14px; letter-spacing: 2px; min-width: 60px; text-align: center; }
+  .slideshow-bar {
+    display: flex; gap: 14px; margin-bottom: 28px;
+  }
+  .slide-action {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12);
+    color: #fff; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; backdrop-filter: blur(6px);
+  }
+  .slide-action:hover { background: rgba(255,255,255,0.3); }
 
   /* 大图灯箱 */
   .gallery-lightbox {
@@ -544,6 +588,14 @@
     .gallery-col { gap: 8px; }
     .gallery-item { border-radius: 10px; border-width: 1.5px; }
     .gallery-lightbox img { max-width: 96%; border-radius: 12px; }
+
+    /* 轮播 */
+    .slideshow-img-wrap { padding: 10px; }
+    .slideshow-img-wrap img { max-height: 60vh; border-radius: 12px; border-width: 2px; }
+    .slide-btn { width: 38px; height: 38px; font-size: 24px; }
+    .slide-counter { font-size: 13px; }
+    .slide-action { width: 36px; height: 36px; font-size: 16px; }
+    .slideshow-bar { gap: 12px; margin-bottom: 34px; }
     .mailbox-header { padding: 20px 22px 14px; }
     .mailbox-title { font-size: 17px; letter-spacing: 2px; }
     .mailbox-close { width: 34px; height: 34px; font-size: 17px; }

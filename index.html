@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c44569">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="彬♡瑶">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>张彬 ♡ 李书瑶</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -199,6 +205,74 @@
     background: #c44569; color: #fff; font-size: 10px; min-width: 18px;
     height: 18px; border-radius: 9px; display: flex; align-items: center;
     justify-content: center; font-family: sans-serif; letter-spacing: 0;
+  }
+
+  /* 合照墙按钮 */
+  .gallery-btn {
+    position: fixed; z-index: 10; bottom: 28px; left: 28px;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1.5px solid rgba(196,68,105,0.25);
+    background: rgba(255,255,255,0.55); backdrop-filter: blur(10px);
+    cursor: pointer; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; box-shadow: 0 2px 12px rgba(196,68,105,0.12);
+  }
+  .gallery-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.08); }
+
+  /* 合照墙浮层 */
+  .gallery-overlay {
+    position: fixed; z-index: 200; inset: 0;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    animation: overlayIn 0.35s ease;
+  }
+  .gallery-container {
+    background: linear-gradient(160deg, #fff9fb, #fff5f8, #fff);
+    border-radius: 28px; max-width: 620px; width: 94%; max-height: 82vh;
+    box-shadow: 0 20px 60px rgba(196,68,105,0.25);
+    border: 1px solid rgba(248,165,194,0.35);
+    animation: letterIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .gallery-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 14px; border-bottom: 1px solid rgba(248,165,194,0.18);
+    flex-shrink: 0;
+  }
+  .gallery-title { font-size: 17px; color: #c44569; letter-spacing: 3px; font-weight: bold; }
+  .gallery-close {
+    width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(196,68,105,0.2);
+    background: rgba(255,255,255,0.6); cursor: pointer; font-size: 16px; color: #c44569;
+    display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+  }
+  .gallery-close:hover { background: rgba(196,68,105,0.08); }
+  .gallery-scroll { flex: 1; overflow-y: auto; padding: 16px 20px; }
+  .gallery-grid { display: flex; gap: 10px; }
+  .gallery-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .gallery-item {
+    border-radius: 12px; overflow: hidden; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(196,68,105,0.12);
+    border: 2px solid rgba(255,255,255,0.8);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .gallery-item:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(196,68,105,0.22); }
+  .gallery-item img { width: 100%; display: block; }
+
+  /* 大图灯箱 */
+  .gallery-lightbox {
+    position: fixed; z-index: 300; inset: 0; background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;
+    animation: overlayIn 0.3s ease;
+  }
+  .gallery-lightbox img {
+    max-width: 94%; max-height: 90vh; border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4); border: 3px solid rgba(255,255,255,0.3);
+  }
+  .gallery-lightbox-close {
+    position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.4); color: #fff; font-size: 20px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
 
   .mailbox-overlay {
@@ -406,6 +480,7 @@
 
     /* 按钮 */
     .music-btn { top: 14px; right: 14px; width: 42px; height: 42px; font-size: 19px; }
+    .gallery-btn { bottom: 24px; left: 14px; width: 44px; height: 44px; font-size: 21px; }
     .mailbox-btn { bottom: 22px; right: 14px; width: 44px; height: 44px; font-size: 22px; }
     .mailbox-btn .badge { top: -3px; right: -3px; font-size: 9px; min-width: 17px; height: 17px; }
 
@@ -416,6 +491,17 @@
 
     /* 信箱 */
     .mailbox-container { width: 94%; max-height: 78vh; border-radius: 22px; }
+
+    /* 合照墙 */
+    .gallery-container { width: 95%; max-height: 80vh; border-radius: 22px; }
+    .gallery-header { padding: 16px 18px 12px; }
+    .gallery-title { font-size: 16px; letter-spacing: 2px; }
+    .gallery-close { width: 34px; height: 34px; font-size: 17px; }
+    .gallery-scroll { padding: 12px 14px; }
+    .gallery-grid { gap: 8px; }
+    .gallery-col { gap: 8px; }
+    .gallery-item { border-radius: 10px; border-width: 1.5px; }
+    .gallery-lightbox img { max-width: 96%; border-radius: 12px; }
     .mailbox-header { padding: 20px 22px 14px; }
     .mailbox-title { font-size: 17px; letter-spacing: 2px; }
     .mailbox-close { width: 34px; height: 34px; font-size: 17px; }
@@ -470,6 +556,7 @@
     .visitor-indicator { top: 10px; left: 10px; }
     .visitor-dot { width: 34px; height: 34px; font-size: 15px; }
     .mailbox-btn { bottom: 16px; right: 10px; width: 40px; height: 40px; font-size: 20px; }
+    .gallery-btn { bottom: 18px; left: 10px; width: 40px; height: 40px; font-size: 19px; }
   }
 </style>
 </head>
@@ -511,10 +598,18 @@
   <span class="visitor-label" id="visitorLabel">Ta 刚刚来过</span>
 </div>
 
+<button class="gallery-btn" id="galleryBtn" title="我们的合照">🖼️</button>
+
 <button class="mailbox-btn" id="mailboxBtn" title="我们的信箱">
   📬
   <span class="badge" id="mailboxBadge" style="display:none">0</span>
 </button>
+
+<div class="gallery-overlay" id="galleryOverlay" style="display:none">
+  <div class="gallery-container" id="galleryContainer">
+    <!-- 动态填充 -->
+  </div>
+</div>
 
 <div class="mailbox-overlay" id="mailboxOverlay" style="display:none">
   <div class="mailbox-container" id="mailboxContainer">
@@ -537,5 +632,16 @@ var CLOUD_URL = 'https://api.jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 <script src="js/ambiance.js"></script>
 <script src="js/mailbox.js"></script>
 <script src="js/visitor.js"></script>
+<script src="js/photos.js"></script>
+<script>
+// 注册 Service Worker（PWA 离线缓存）
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    console.log('SW registered:', reg.scope);
+  }).catch(function(err) {
+    console.log('SW failed:', err);
+  });
+}
+</script>
 </body>
 </html>

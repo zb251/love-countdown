@@ -1,0 +1,18 @@
+{
+  "name": "张彬 ♡ 李书瑶",
+  "short_name": "彬♡瑶",
+  "description": "我们的爱情计时器",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fce4ec",
+  "theme_color": "#c44569",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

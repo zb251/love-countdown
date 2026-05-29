@@ -335,6 +335,25 @@
   .envelope-date { font-size: 11px; color: #dbb6c4; margin-top: 3px; letter-spacing: 1px; }
   .envelope-arrow { color: #dbb6c4; font-size: 14px; flex-shrink: 0; }
 
+  /* 未读标记 */
+  .unread-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: #c44569; vertical-align: middle; margin-left: 5px;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  /* 滚动条美化 */
+  .mailbox-list::-webkit-scrollbar { width: 5px; }
+  .mailbox-list::-webkit-scrollbar-track { background: transparent; }
+  .mailbox-list::-webkit-scrollbar-thumb {
+    background: rgba(196,68,105,0.18); border-radius: 10px;
+  }
+  .mailbox-list::-webkit-scrollbar-thumb:hover { background: rgba(196,68,105,0.35); }
+
   .mailbox-footer { padding: 12px 24px 20px; border-top: 1px solid rgba(248,165,194,0.18); }
   .mailbox-compose-btn {
     width: 100%; padding: 13px; border-radius: 20px; letter-spacing: 2px;
@@ -642,12 +661,6 @@ if ('serviceWorker' in navigator) {
     console.log('SW failed:', err);
   });
 }
-// 阻止浏览器自动弹出"添加到主屏幕"提示
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  // 不自动弹窗，用户仍可通过浏览器菜单手动安装
-});
-
 </script>
 </body>
 </html>

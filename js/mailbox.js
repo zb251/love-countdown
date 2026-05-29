@@ -79,6 +79,7 @@ var mailboxBadge = document.getElementById('mailboxBadge');
 
 function getIcon(author) { return author === '张彬' ? '💙' : '💗'; }
 function getEnvelopeIcon(author) { return author === '张彬' ? '✉️' : '💌'; }
+function letterKey(l) { return l.author + '|' + l.title + '|' + l.time; }
 
 function formatTime(ts) {
   var d = new Date(ts);
@@ -86,9 +87,40 @@ function formatTime(ts) {
     String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
 }
 
+// 获取已读集合（兼容旧版格式：数字 → 前N封标记已读）
+function getSeenKeys() {
+  var raw = localStorage.getItem('mailbox_seen');
+  if (!raw) return new Set();
+  try {
+    var parsed = JSON.parse(raw);
+    if (typeof parsed === 'number') {
+      // 旧版格式：前 parsed 封已读
+      var keys = [];
+      var sorted = [].concat(mailboxLetters).sort(function(a, b) { return a.time - b.time; });
+      for (var i = 0; i < Math.min(parsed, sorted.length); i++) {
+        keys.push(letterKey(sorted[i]));
+      }
+      localStorage.setItem('mailbox_seen', JSON.stringify(keys));
+      return new Set(keys);
+    }
+    if (Array.isArray(parsed)) return new Set(parsed);
+  } catch(e) {}
+  return new Set();
+}
+
+function markSeenLetter(l) {
+  var seen = getSeenKeys();
+  seen.add(letterKey(l));
+  localStorage.setItem('mailbox_seen', JSON.stringify(Array.from(seen)));
+  updateBadge();
+}
+
 function updateBadge() {
-  var seen = JSON.parse(localStorage.getItem('mailbox_seen') || '0');
-  var count = mailboxLetters.length - Math.min(seen, mailboxLetters.length);
+  var seen = getSeenKeys();
+  var count = 0;
+  mailboxLetters.forEach(function(l) {
+    if (!seen.has(letterKey(l))) count++;
+  });
   if (count > 0) {
     mailboxBadge.style.display = 'flex';
     mailboxBadge.textContent = count > 99 ? '99+' : count;
@@ -97,13 +129,9 @@ function updateBadge() {
   }
 }
 
-function markSeen() {
-  localStorage.setItem('mailbox_seen', mailboxLetters.length);
-  updateBadge();
-}
-
 function renderMailboxList() {
   var sorted = [].concat(mailboxLetters).reverse();
+  var seen = getSeenKeys();
   mailboxContainer.innerHTML =
     '<div class="mailbox-header">' +
       '<span class="mailbox-title">💌 我们的信箱</span>' +
@@ -113,11 +141,12 @@ function renderMailboxList() {
       (sorted.length === 0 ? '<div class="mailbox-empty">📭 信箱还是空的<br>写第一封信吧</div>' : '') +
       sorted.map(function(l) {
         var idx = mailboxLetters.indexOf(l);
-        return '<div class="envelope" data-idx="' + idx + '">' +
+        var isNew = !seen.has(letterKey(l));
+        return '<div class="envelope' + (isNew ? ' new' : '') + '" data-idx="' + idx + '">' +
           '<div class="envelope-icon">' + getEnvelopeIcon(l.author) + '</div>' +
           '<div class="envelope-info">' +
             '<div class="envelope-author">' + getIcon(l.author) + ' ' + l.author + '</div>' +
-            '<div class="envelope-title">' + l.title + '</div>' +
+            '<div class="envelope-title">' + l.title + (isNew ? ' <span class="unread-dot"></span>' : '') + '</div>' +
             '<div class="envelope-date">' + formatTime(l.time) + '</div>' +
           '</div>' +
           '<div class="envelope-arrow">›</div>' +
@@ -157,7 +186,7 @@ function showLetter(idx) {
       '<button class="letter-view-back" id="letterBack">← 返回信箱</button>' +
     '</div>';
   mailboxContainer.querySelector('#letterBack').addEventListener('click', renderMailboxList);
-  markSeen();
+  markSeenLetter(l);
 }
 
 function showCompose() {
@@ -194,9 +223,10 @@ function showCompose() {
     var title = mailboxContainer.querySelector('#composeTitle').value.trim();
     var text = mailboxContainer.querySelector('#composeText').value.trim();
     if (!title || !text) return;
-    mailboxLetters.push({ author: selectedAuthor, title: title, text: text, time: Date.now() });
+    var newLetter = { author: selectedAuthor, title: title, text: text, time: Date.now() };
+    mailboxLetters.push(newLetter);
     saveLetters(mailboxLetters);
-    markSeen();
+    markSeenLetter(newLetter);
     renderMailboxList();
   });
 }
@@ -204,7 +234,6 @@ function showCompose() {
 function openMailbox() {
   renderMailboxList();
   mailboxOverlay.style.display = 'flex';
-  markSeen();
 }
 
 function closeMailbox() {
@@ -270,7 +299,6 @@ importInput.addEventListener('change', function() {
       if (added > 0) {
         mailboxLetters.sort(function(a, b) { return a.time - b.time; });
         saveLetters(mailboxLetters);
-        markSeen();
         renderMailboxList();
         alert('成功导入 ' + added + ' 封信 💌');
       } else {

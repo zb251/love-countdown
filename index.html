@@ -106,6 +106,13 @@
     50%      { box-shadow: 0 8px 60px rgba(196,68,105,0.22), 0 2px 12px rgba(196,68,105,0.14), 0 0 60px rgba(248,165,194,0.35), inset 0 1px 0 rgba(255,255,255,0.7); }
   }
 
+  @keyframes cardUnfold {
+    0%   { transform: scale(0.6) translateY(30px); opacity: 0; filter: blur(6px); }
+    50%  { transform: scale(0.98) translateY(-2px); opacity: 0.9; filter: blur(0); }
+    75%  { transform: scale(1.015) translateY(0); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+  }
+
   .card {
     position: relative;
     z-index: 1;
@@ -119,7 +126,7 @@
     max-width: 560px;
     width: 92%;
     border: 1px solid rgba(248,165,194,0.25);
-    animation: cardBreath 4s ease-in-out infinite;
+    animation: cardBreath 4s ease-in-out infinite, cardUnfold 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
   }
 
   .couple {

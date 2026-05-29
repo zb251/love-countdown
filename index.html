@@ -269,6 +269,16 @@
   }
   .mailbox-compose-btn:hover { background: rgba(248,165,194,0.18); border-style: solid; }
 
+  .mailbox-tools {
+    display: flex; gap: 10px; margin-top: 10px;
+  }
+  .mailbox-tool-btn {
+    flex: 1; padding: 9px 8px; border-radius: 16px; letter-spacing: 1px;
+    border: 1px solid rgba(196,68,105,0.18); background: rgba(255,255,255,0.5);
+    color: #b07a8e; font-size: 13px; cursor: pointer; transition: all 0.3s ease;
+  }
+  .mailbox-tool-btn:hover { background: rgba(255,255,255,0.8); border-color: rgba(196,68,105,0.35); }
+
   /* 写信面板 */
   .compose-panel { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
   .compose-author-toggle {
@@ -418,6 +428,7 @@
     .envelope-arrow { font-size: 16px; }
     .mailbox-footer { padding: 12px 18px 18px; }
     .mailbox-compose-btn { font-size: 14px; padding: 12px; letter-spacing: 2px; }
+    .mailbox-tool-btn { font-size: 11px; padding: 8px 6px; letter-spacing: 0.5px; border-radius: 12px; }
     .mailbox-empty { padding: 32px 0; font-size: 13px; }
 
     /* 写信面板 */

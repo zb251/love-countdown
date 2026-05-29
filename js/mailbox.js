@@ -126,6 +126,10 @@ function renderMailboxList() {
     '</div>' +
     '<div class="mailbox-footer">' +
       '<button class="mailbox-compose-btn" id="mailboxComposeBtn">✍️ 写一封信</button>' +
+      '<div class="mailbox-tools">' +
+        '<button class="mailbox-tool-btn" id="mailboxExportBtn">📥 导出备份</button>' +
+        '<button class="mailbox-tool-btn" id="mailboxImportBtn">📤 导入恢复</button>' +
+      '</div>' +
     '</div>';
 
   mailboxContainer.querySelectorAll('.envelope').forEach(function(el) {
@@ -137,6 +141,8 @@ function renderMailboxList() {
 
   mailboxContainer.querySelector('#mailboxClose').addEventListener('click', closeMailbox);
   mailboxContainer.querySelector('#mailboxComposeBtn').addEventListener('click', showCompose);
+  mailboxContainer.querySelector('#mailboxExportBtn').addEventListener('click', exportMailbox);
+  mailboxContainer.querySelector('#mailboxImportBtn').addEventListener('click', triggerImport);
 }
 
 function showLetter(idx) {
@@ -213,6 +219,74 @@ document.getElementById('mailboxBtn').addEventListener('click', function(e) {
   e.stopPropagation();
   openMailbox();
 });
+
+// --- 导出信箱 ---
+function exportMailbox() {
+  var data = JSON.stringify(mailboxLetters, null, 2);
+  var blob = new Blob([data], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var now = new Date();
+  var filename = 'love-mailbox-' + now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + '.json';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- 导入信箱（隐藏文件选择器）---
+var importInput = document.createElement('input');
+importInput.type = 'file';
+importInput.accept = '.json';
+importInput.style.display = 'none';
+document.body.appendChild(importInput);
+
+importInput.addEventListener('change', function() {
+  var file = importInput.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var arr = JSON.parse(e.target.result);
+      if (!Array.isArray(arr)) throw new Error('格式不对');
+      var existingKeys = new Set();
+      mailboxLetters.forEach(function(l) {
+        existingKeys.add(l.author + '|' + l.title + '|' + l.time);
+      });
+      var added = 0;
+      arr.forEach(function(l) {
+        if (!l.author || !l.title || !l.text || !l.time) return;
+        var key = l.author + '|' + l.title + '|' + l.time;
+        if (!existingKeys.has(key)) {
+          mailboxLetters.push(l);
+          existingKeys.add(key);
+          added++;
+        }
+      });
+      if (added > 0) {
+        mailboxLetters.sort(function(a, b) { return a.time - b.time; });
+        saveLetters(mailboxLetters);
+        markSeen();
+        renderMailboxList();
+        alert('成功导入 ' + added + ' 封信 💌');
+      } else {
+        alert('没有新信件，都已存在');
+      }
+    } catch(err) {
+      alert('文件格式不对，请选择之前导出的 .json 文件');
+    }
+  };
+  reader.readAsText(file);
+  importInput.value = '';
+});
+
+function triggerImport() {
+  importInput.click();
+}
 
 updateBadge();
 

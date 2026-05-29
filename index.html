@@ -162,11 +162,11 @@
   .main-days-unit { font-size: 15px; color: #c4859a; margin-bottom: 8px; letter-spacing: 2px; }
 
   .stat-row {
-    display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;
+    display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap;
     margin: 24px 0 18px; color: #c4859a; font-size: 14px; letter-spacing: 1.5px;
   }
-  .stat-row .num { color: #c44569; font-weight: bold; font-size: 15px; font-family: 'Georgia', 'Cormorant Garamond', serif; }
-  .stat-dot { color: #dbb6c4; font-size: 6px; margin: 0 2px; }
+  .stat-item { white-space: nowrap; }
+  .stat-row .num { color: #c44569; font-weight: bold; font-size: 15px; font-family: 'Georgia', 'Cormorant Garamond', serif; margin-right: 1px; }
 
   .countdown-box {
     margin-top: 22px; padding: 14px 20px; background: rgba(248,165,194,0.13);
@@ -381,19 +381,14 @@
     .main-days { font-size: 56px; letter-spacing: -1px; }
     .main-days-unit { font-size: 13px; margin-bottom: 6px; letter-spacing: 2px; }
 
-    /* 统计行：竖排更清晰 */
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px 4px;
-      margin: 20px 0 16px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-align: center;
+    /* 统计行：flex换行，每个数字+单位一个小块 */
+    .stat-row { gap: 4px 10px; margin: 18px 0 14px; font-size: 12px; }
+    .stat-item {
+      display: inline-flex; flex-direction: column; align-items: center;
+      background: rgba(248,165,194,0.08); border-radius: 10px;
+      padding: 6px 8px; min-width: 40px;
     }
-    .stat-row span { display: inline; }
-    .stat-row .num { font-size: 16px; display: block; margin-bottom: 1px; }
-    .stat-dot { display: none; }
+    .stat-row .num { font-size: 17px; margin-right: 0; }
 
     .countdown-box { padding: 14px 16px; font-size: 13px; border-radius: 18px; letter-spacing: 1.5px; line-height: 2; }
     .countdown-box strong { font-size: 18px; }
@@ -454,8 +449,9 @@
     .subtitle { font-size: 12px; margin-bottom: 18px; }
     .main-days { font-size: 44px; }
     .main-days-unit { font-size: 12px; }
-    .stat-row { font-size: 10px; gap: 6px 2px; }
-    .stat-row .num { font-size: 14px; }
+    .stat-row { gap: 4px 6px; font-size: 11px; }
+    .stat-item { padding: 4px 6px; min-width: 34px; border-radius: 8px; }
+    .stat-row .num { font-size: 15px; }
     .countdown-box { font-size: 11px; padding: 10px 12px; }
     .countdown-box strong { font-size: 16px; }
     .hint { font-size: 10px; margin-top: 16px; }
@@ -480,11 +476,13 @@
   <div class="main-days" id="totalDays">0</div>
   <div class="main-days-unit">天</div>
   <div class="stat-row">
-    <span class="num" id="years">0</span> 年
-    <span class="stat-dot">·</span>
-    <span class="num" id="months">0</span> 月
-    <span class="stat-dot">·</span>
-    <span class="num" id="weeks">0</span> 周<span class="stat-dot">·</span><span class="num" id="days">0</span> 天<span class="stat-dot">·</span><span class="num" id="hours">0</span> 小时<span class="stat-dot">·</span><span class="num" id="minutes">0</span> 分钟<span class="stat-dot">·</span><span class="num" id="seconds">0</span> 秒
+    <span class="stat-item"><span class="num" id="years">0</span>年</span>
+    <span class="stat-item"><span class="num" id="months">0</span>月</span>
+    <span class="stat-item"><span class="num" id="weeks">0</span>周</span>
+    <span class="stat-item"><span class="num" id="days">0</span>天</span>
+    <span class="stat-item"><span class="num" id="hours">0</span>小时</span>
+    <span class="stat-item"><span class="num" id="minutes">0</span>分钟</span>
+    <span class="stat-item"><span class="num" id="seconds">0</span>秒</span>
   </div>
   <div class="countdown-box">
     🌸 距离我们的下一个纪念日还有<br>

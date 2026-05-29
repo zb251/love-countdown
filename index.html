@@ -661,7 +661,7 @@ setInterval(update, 1000);
 
 	// 信箱云端同步
 	const CLOUD_ID = '019e73c8-adf9-72ea-9a04-e10fb35bd4ed';
-	const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/' + CLOUD_ID;
+	const CLOUD_URL = 'https://api.jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 	function syncMailboxToCloud() {
 	  fetch(CLOUD_URL)
 	    .then(r => r.json())
@@ -879,9 +879,9 @@ setInterval(update, 1000);
 	  let deviceId = localStorage.getItem('device_id');
 	  if (!deviceId) { deviceId = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); localStorage.setItem('device_id', deviceId); }
 
-	  // --- jsonblob.com 跨设备同步 ---
+	  // --- api.jsonblob.com 跨设备同步 ---
 	  const CLOUD_ID = '019e73c8-adf9-72ea-9a04-e10fb35bd4ed';
-	  const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/' + CLOUD_ID;
+	  const CLOUD_URL = 'https://api.jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 
 	  function syncToCloud() {
 	    if (!me) return;

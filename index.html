@@ -322,23 +322,23 @@
   }
   .letter-view-back:hover { background: rgba(196,68,105,0.06); }
 
-  /* 对方打开提醒 */
-  .visitor-indicator {
-    position: fixed; z-index: 10; top: 24px; left: 24px;
-    display: flex; align-items: center; gap: 8px; cursor: pointer;
-    opacity: 0; transform: translateY(-10px); transition: all 0.5s ease;
-    pointer-events: none;
-  }
-  .visitor-indicator.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-  .visitor-dot {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(255,255,255,0.55); backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(196,68,105,0.25);
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-    box-shadow: 0 2px 12px rgba(196,68,105,0.12);
-    transition: all 0.3s ease;
-  }
-  .visitor-dot.pulse { animation: visitorPulse 2s ease-in-out infinite; }
+	  /* 对方打开提醒 */
+	  .visitor-indicator {
+	    position: fixed; z-index: 10; top: 24px; left: 24px;
+	    display: flex; align-items: center; gap: 8px; cursor: pointer;
+	    opacity: 0.7; transform: translateY(0); transition: all 0.5s ease;
+	    pointer-events: auto;
+	  }
+	  .visitor-indicator.alert { opacity: 1; }
+	  .visitor-dot {
+	    width: 40px; height: 40px; border-radius: 50%;
+	    background: rgba(255,255,255,0.55); backdrop-filter: blur(10px);
+	    border: 1.5px solid rgba(196,68,105,0.25);
+	    display: flex; align-items: center; justify-content: center; font-size: 18px;
+	    box-shadow: 0 2px 12px rgba(196,68,105,0.12);
+	    transition: all 0.3s ease;
+	  }
+	  .visitor-dot.pulse { animation: visitorPulse 2s ease-in-out infinite; }
   @keyframes visitorPulse {
     0%, 100% { box-shadow: 0 2px 12px rgba(196,68,105,0.12); }
     50% { box-shadow: 0 2px 24px rgba(196,68,105,0.4), 0 0 0 6px rgba(255,107,138,0.15); }
@@ -496,7 +496,7 @@
 </button>
 
 <div class="visitor-indicator" id="visitorIndicator" title="点击查看详情">
-  <div class="visitor-dot pulse">💓</div>
+  <div class="visitor-dot">💓</div>
   <span class="visitor-label" id="visitorLabel">Ta 刚刚来过</span>
 </div>
 
@@ -930,12 +930,12 @@ setInterval(update, 1000);
 
 	  let indicatorTimer = null;
 	  function showIndicator(msg) {
-	    if (indicator.classList.contains('visible')) return;
-	    indicator.classList.add('visible');
+	    if (indicator.classList.contains('alert')) return;
+	    indicator.classList.add('alert');
 	    dot.classList.add('pulse');
 	    label.textContent = msg;
 	    clearTimeout(indicatorTimer);
-	    indicatorTimer = setTimeout(() => { indicator.classList.remove('visible'); dot.classList.remove('pulse'); }, 18000);
+	    indicatorTimer = setTimeout(() => { indicator.classList.remove('alert'); dot.classList.remove('pulse'); }, 18000);
 	  }
 
 	  // 点击查看详情（从云端查询）

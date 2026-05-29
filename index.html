@@ -653,12 +653,59 @@ setInterval(update, 1000);
 	  try { return JSON.parse(localStorage.getItem('mailbox_letters') || 'null'); } catch(e) {}
 	  return null;
 	}
-	function saveLetters(letters) {
+	function saveLetters(letters, sync) {
+	  mailboxLetters = letters;
 	  try { localStorage.setItem('mailbox_letters', JSON.stringify(letters)); } catch(e) {}
+	  if (sync !== false) syncMailboxToCloud();
+	}
+
+	// 信箱云端同步
+	function getBlobId() { return localStorage.getItem('cloud_blob_id'); }
+	function getBlobUrl(id) { return 'https://jsonblob.com/api/jsonBlob/' + id; }
+	function syncMailboxToCloud() {
+	  const id = getBlobId();
+	  if (!id) return;
+	  // 先读取现有数据，合并后写入，避免覆盖 lastVisit
+	  fetch(getBlobUrl(id))
+	    .then(r => r.json())
+	    .then(data => {
+	      const merged = Object.assign({}, data || {}, { mailbox: mailboxLetters });
+	      return fetch(getBlobUrl(id), {
+	        method: 'PUT',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(merged)
+	      });
+	    }).catch(() => {});
+	}
+	function syncMailboxFromCloud() {
+	  const id = getBlobId();
+	  if (!id) return;
+	  fetch(getBlobUrl(id))
+	    .then(r => r.json())
+	    .then(data => {
+	      if (!data || !data.mailbox || !Array.isArray(data.mailbox)) return;
+	      const cloudLetters = data.mailbox;
+	      if (cloudLetters.length === 0) return;
+	      const merged = [...mailboxLetters];
+	      const existingKeys = new Set(merged.map(l => l.author + '|' + l.title + '|' + l.time));
+	      let hasNew = false;
+	      cloudLetters.forEach(l => {
+	        const key = l.author + '|' + l.title + '|' + l.time;
+	        if (!existingKeys.has(key)) { merged.push(l); existingKeys.add(key); hasNew = true; }
+	      });
+	      if (hasNew) {
+	        merged.sort((a, b) => a.time - b.time);
+	        saveLetters(merged, false);
+	        updateBadge();
+	      }
+	    }).catch(() => {});
 	}
 
 	let mailboxLetters = loadLetters();
 	if (!mailboxLetters) { mailboxLetters = [...PRESET_LETTERS]; saveLetters(mailboxLetters); }
+	// 首次从云端拉取
+	setTimeout(() => { syncMailboxFromCloud(); }, 3000);
+	setInterval(() => { syncMailboxFromCloud(); }, 15000);
 
 	const mailboxOverlay = document.getElementById('mailboxOverlay');
 	const mailboxContainer = document.getElementById('mailboxContainer');
@@ -887,13 +934,19 @@ setInterval(update, 1000);
 	    if (!me) return;
 	    getOrCreateBlobId().then(id => {
 	      if (!id) return;
-	      fetch(getBlobUrl(id), {
-	        method: 'PUT',
-	        headers: { 'Content-Type': 'application/json' },
-	        body: JSON.stringify({
-	          lastVisit: { name: me, time: Date.now(), device: deviceId }
-	        })
-	      }).catch(() => {});
+	      // 先读取现有数据，合并后写入，避免覆盖 mailbox
+	      fetch(getBlobUrl(id))
+	        .then(r => r.json())
+	        .then(data => {
+	          const merged = Object.assign({}, data || {}, {
+	            lastVisit: { name: me, time: Date.now(), device: deviceId }
+	          });
+	          return fetch(getBlobUrl(id), {
+	            method: 'PUT',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify(merged)
+	          });
+	        }).catch(() => {});
 	    });
 	  }
 

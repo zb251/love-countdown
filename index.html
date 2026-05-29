@@ -642,6 +642,12 @@ if ('serviceWorker' in navigator) {
     console.log('SW failed:', err);
   });
 }
+// 阻止浏览器自动弹出"添加到主屏幕"提示
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  // 不自动弹窗，用户仍可通过浏览器菜单手动安装
+});
+
 </script>
 </body>
 </html>

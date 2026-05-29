@@ -663,10 +663,15 @@ setInterval(update, 1000);
 	const CLOUD_ID = '019e73c8-adf9-72ea-9a04-e10fb35bd4ed';
 	const CLOUD_URL = 'https://api.jsonblob.com/api/jsonBlob/' + CLOUD_ID;
 	function syncMailboxToCloud() {
+	  const me = localStorage.getItem('viewer_name');
+	  const deviceId = localStorage.getItem('device_id');
 	  fetch(CLOUD_URL)
 	    .then(r => r.json())
 	    .then(data => {
-	      const merged = Object.assign({}, data || {}, { mailbox: mailboxLetters });
+	      const merged = Object.assign({}, data || {}, {
+	        mailbox: mailboxLetters,
+	        lastVisit: me ? { name: me, time: Date.now(), device: deviceId } : (data && data.lastVisit)
+	      });
 	      return fetch(CLOUD_URL, {
 	        method: 'PUT',
 	        headers: { 'Content-Type': 'application/json' },
@@ -889,7 +894,8 @@ setInterval(update, 1000);
 	      .then(r => r.json())
 	      .then(data => {
 	        const merged = Object.assign({}, data || {}, {
-	          lastVisit: { name: me, time: Date.now(), device: deviceId }
+	          lastVisit: { name: me, time: Date.now(), device: deviceId },
+	          mailbox: mailboxLetters
 	        });
 	        return fetch(CLOUD_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(merged) });
 	      }).catch(() => {});
@@ -973,7 +979,7 @@ setInterval(update, 1000);
 		window.addEventListener('beforeunload', () => {
 			if (me) {
 				localStorage.setItem('local_last_visit', JSON.stringify({ name: me, time: Date.now() }));
-				const payload = JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId } });
+				const payload = JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId }, mailbox: mailboxLetters });
 				try { navigator.sendBeacon(CLOUD_URL, new Blob([payload], {type:'application/json'})); } catch(e) {}
 			}
 		});

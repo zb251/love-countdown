@@ -50,7 +50,7 @@ if (typeof PHOTOS !== 'undefined' && PHOTOS.length > 0) {
 
 // --- 星星 ---
 var starChars = ['✨','⭐','·','✦','⋆','˚','✧'];
-for (var i = 0; i < 30; i++) {
+for (var i = 0; i < 55; i++) {
   var el = document.createElement('div');
   el.className = 'star';
   el.textContent = starChars[Math.floor(Math.random() * starChars.length)];
@@ -64,14 +64,14 @@ for (var i = 0; i < 30; i++) {
 
 // --- 情绪色彩 ---
 var MOODS = [
-  { s: 0, e: 5,  name: '深夜', colors: ['#d8d0e8', '#c8bcd8', '#dbd0e8', '#c8bcd8', '#d8d0e8'] },
-  { s: 5, e: 7,  name: '日出', colors: ['#f2d8c8', '#f8e0d0', '#fbe8d8', '#f8e0d0', '#f2d8c8'] },
+  { s: 0, e: 5,  name: '深夜', colors: ['#1a1528', '#120e20', '#1e1830', '#120e20', '#1a1528'] },
+  { s: 5, e: 7,  name: '日出', colors: ['#3a2840', '#f2d8c8', '#fbe8d8', '#f2d8c8', '#3a2840'] },
   { s: 7, e: 10, name: '清晨', colors: ['#fce4ec', '#f8d7e8', '#fef0f5', '#f8d7e8', '#fce4ec'] },
   { s: 10, e: 14, name: '正午', colors: ['#fff5f2', '#ffeae2', '#fffaf7', '#ffeae2', '#fff5f2'] },
   { s: 14, e: 17, name: '午后', colors: ['#fff3e6', '#ffe6d4', '#fdf0e0', '#ffe6d4', '#fff3e6'] },
   { s: 17, e: 19, name: '日落', colors: ['#ffe4d0', '#ffd0bc', '#fce0d0', '#ffd0bc', '#ffe4d0'] },
-  { s: 19, e: 21, name: '黄昏', colors: ['#ecd8e0', '#e0c8d8', '#f0dce4', '#e0c8d8', '#ecd8e0'] },
-  { s: 21, e: 24, name: '夜晚', colors: ['#e0d4e8', '#d0c0e0', '#e8d8f0', '#d0c0e0', '#e0d4e8'] }
+  { s: 19, e: 21, name: '黄昏', colors: ['#4a3a50', '#342438', '#4e3e55', '#342438', '#4a3a50'] },
+  { s: 21, e: 24, name: '夜晚', colors: ['#252038', '#1c1630', '#2a2240', '#1c1630', '#252038'] }
 ];
 
 function hexToRgb(hex) {

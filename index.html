@@ -542,7 +542,12 @@ PHOTOS.forEach(src => { const pre = new Image(); pre.src = src; });
 function spawnPhoto() {
   if (PHOTOS.length === 0) return;
   const src = PHOTOS[Math.floor(Math.random() * PHOTOS.length)];
-  const img = new Image();
+  const wrapper = document.createElement('div');
+  wrapper.className = 'photo-wrapper';
+  wrapper.style.left = (10 + Math.random() * 80) + '%';
+  wrapper.style.top = '-100px';
+  wrapper.style.animationDuration = (10 + Math.random() * 14) + 's';
+  const img = document.createElement('img');
   img.className = 'photo';
   img.src = src;
   const isMobile = window.innerWidth < 480;
@@ -551,17 +556,9 @@ function spawnPhoto() {
   img.style.height = size + 'px';
   img.style.animationName = Math.random() > 0.5 ? 'photoSwayR' : 'photoSwayL';
   img.style.animationDuration = (2.5 + Math.random() * 3.5) + 's';
-  // 等图片解码完成再显示，避免空白
-  img.decode().then(() => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'photo-wrapper';
-    wrapper.style.left = (10 + Math.random() * 80) + '%';
-    wrapper.style.top = '-100px';
-    wrapper.style.animationDuration = (10 + Math.random() * 14) + 's';
-    wrapper.appendChild(img);
-    document.body.appendChild(wrapper);
-    setTimeout(() => wrapper.remove(), 28000);
-  }).catch(() => {});
+  wrapper.appendChild(img);
+  document.body.appendChild(wrapper);
+  setTimeout(() => wrapper.remove(), 28000);
 }
 if (PHOTOS.length > 0) {
   spawnPhoto(); spawnPhoto(); spawnPhoto();

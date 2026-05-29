@@ -894,6 +894,7 @@ setInterval(update, 1000);
 	        return fetch(CLOUD_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(merged) });
 	      }).catch(() => {});
 	  }
+	  let lastSeenCloudTime = parseInt(localStorage.getItem('last_seen_cloud') || '0');
 
 	  function checkCloud() {
 	    if (!me) return;
@@ -904,10 +905,11 @@ setInterval(update, 1000);
 	        const v = data.lastVisit;
 	        if (v.name === me) return;
 	        if (v.device === deviceId) return;
+	        if (v.time <= lastSeenCloudTime) return;
+	        lastSeenCloudTime = v.time;
+	        localStorage.setItem('last_seen_cloud', v.time);
 	        const elapsed = Math.floor((Date.now() - v.time) / 60000);
-	        if (elapsed >= 0 && elapsed < 60) {
-	          showIndicator(elapsed <= 0 ? 'Ta 刚刚来过' : elapsed + ' 分钟前 Ta 来过');
-	        }
+	        showIndicator(elapsed <= 0 ? 'Ta 刚刚来过' : elapsed + ' 分钟前 Ta 来过');
 	      }).catch(() => {});
 	  }
 
@@ -936,21 +938,25 @@ setInterval(update, 1000);
 	    indicatorTimer = setTimeout(() => { indicator.classList.remove('visible'); dot.classList.remove('pulse'); }, 18000);
 	  }
 
-	  // 点击查看详情
+	  // 点击查看详情（从云端查询）
 	  indicator.addEventListener('click', function() {
-	    const raw = localStorage.getItem('local_last_visit');
 	    let info = me ? '当前是你：' + me : '请先点击名字选择身份';
-	    if (raw) {
-	      try {
-	        const v = JSON.parse(raw);
-	        if (v.name !== me) {
+	    info += '\n\n正在查询对方访问记录...';
+	    fetch(CLOUD_URL)
+	      .then(r => r.json())
+	      .then(data => {
+	        if (data && data.lastVisit && data.lastVisit.name && data.lastVisit.name !== me) {
+	          const v = data.lastVisit;
 	          const d = new Date(v.time);
-	          info += '\n\n' + v.name + ' 在 ' + d.toLocaleString('zh-CN', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) + ' 来过';
+	          info = (me ? '当前是你：' + me : '请先点击名字选择身份') + '\n\n' + v.name + ' 在 ' + d.toLocaleString('zh-CN', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) + ' 来过';
+	        } else {
+	          info = (me ? '当前是你：' + me : '请先点击名字选择身份') + '\n\n暂无对方访问记录';
 	        }
-	      } catch(e) {}
-	    }
-	    info += '\n\n✨ 双方选好身份后自动互通，无需任何操作';
-	    alert(info);
+	        alert(info);
+	      }).catch(() => {
+	        info = (me ? '当前是你：' + me : '请先点击名字选择身份') + '\n\n网络不通，请稍后再试';
+	        alert(info);
+	      });
 	  });
 
 	  // 初始化

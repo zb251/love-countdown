@@ -212,6 +212,20 @@
     50% { opacity: 1; }
   }
 
+  /* 同时在线 */
+  .both-online {
+    margin-top: 14px; font-size: 13px; color: #5a9e6f; letter-spacing: 2px;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    opacity: 0; height: 0; overflow: hidden;
+    transition: all 0.6s ease;
+  }
+  .both-online.show { opacity: 1; height: 26px; }
+  .both-online::before {
+    content: ''; display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: #5a9e6f;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+
   /* 信箱 */
   .mailbox-btn {
     position: fixed; z-index: 10; bottom: 28px; right: 28px;
@@ -680,6 +694,7 @@
     🌸 距离我们的下一个纪念日还有<br>
     <strong id="countdown">0 天</strong>
   </div>
+  <div class="both-online" id="bothOnline">💞 此刻你们都在</div>
   <div class="hint">💛 点击名字选身份 ｜ 💓 对方来访自动提醒</div>
 </div>
 

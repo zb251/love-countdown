@@ -35,14 +35,18 @@ if (!deviceId) {
   localStorage.setItem('device_id', deviceId);
 }
 
-// 上传最后访问记录（只写 lastVisit，不碰 mailbox）
+// 上传最后访问记录（只写 lastVisit + bothTimes，不碰 mailbox）
 function syncToCloud() {
   if (!me) return;
   fetch(CLOUD_URL)
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      var merged = Object.assign({}, data || {}, {
-        lastVisit: { name: me, time: Date.now(), device: deviceId }
+      var d = data || {};
+      var bothTimes = d.bothTimes || {};
+      bothTimes[me] = Date.now();
+      var merged = Object.assign({}, d, {
+        lastVisit: { name: me, time: Date.now(), device: deviceId },
+        bothTimes: bothTimes
       });
       return fetch(CLOUD_URL, {
         method: 'PUT',
@@ -53,6 +57,29 @@ function syncToCloud() {
 }
 
 var lastSeenCloudTime = parseInt(localStorage.getItem('last_seen_cloud') || '0');
+var bothOnlineEl = document.getElementById('bothOnline');
+
+// 同时在线检测
+function checkBothOnline() {
+  if (!me) return;
+  fetch(CLOUD_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data || !data.bothTimes) return;
+      var bt = data.bothTimes;
+      var now = Date.now();
+      var zhangTime = bt['张彬'] || 0;
+      var liTime = bt['李书瑶'] || 0;
+      var FIVE_MIN = 5 * 60 * 1000;
+      if (now - zhangTime < FIVE_MIN && now - liTime < FIVE_MIN) {
+        if (!bothOnlineEl.classList.contains('show')) {
+          bothOnlineEl.classList.add('show');
+        }
+      } else {
+        bothOnlineEl.classList.remove('show');
+      }
+    }).catch(function() {});
+}
 
 function checkCloud() {
   if (!me) return;
@@ -129,8 +156,8 @@ if (me) {
 
 checkLocal();
 // 首次延迟检查云端（等 blob 创建完成）
-setTimeout(function() { checkCloud(); }, 4000);
-setInterval(function() { checkLocal(); checkCloud(); }, 60000);
+setTimeout(function() { checkCloud(); checkBothOnline(); }, 4000);
+setInterval(function() { checkLocal(); checkCloud(); checkBothOnline(); }, 60000);
 
 window.addEventListener('beforeunload', function() {
   if (me) {

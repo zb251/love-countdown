@@ -369,12 +369,81 @@
   }
 
   @media (max-width: 480px) {
-    .card { padding: 38px 22px; border-radius: 28px; }
-    .main-days { font-size: 56px; }
-    .couple-name { font-size: 22px; }
-    .couple-heart { font-size: 26px; }
-    .stat-row { font-size: 12px; gap: 2px; }
-    .stat-row .num { font-size: 13px; }
+    body { align-items: flex-start; padding-top: 16px; overflow-y: auto; overflow-x: hidden; }
+    .card { padding: 28px 16px 26px; border-radius: 24px; width: 94%; max-width: 400px; }
+    .couple { gap: 8px; margin-bottom: 6px; }
+    .couple-name { font-size: 18px; letter-spacing: 1px; padding: 3px 6px; border-radius: 10px; }
+    .couple-heart { font-size: 22px; }
+    .subtitle { font-size: 13px; margin-bottom: 20px; letter-spacing: 1.5px; }
+    .divider { margin-bottom: 18px; }
+    .together-label { font-size: 13px; }
+    .main-days { font-size: 48px; letter-spacing: -1px; }
+    .main-days-unit { font-size: 13px; margin-bottom: 4px; }
+    .stat-row { font-size: 11px; gap: 3px; margin: 18px 0 14px; letter-spacing: 1px; line-height: 1.8; }
+    .stat-row .num { font-size: 12px; }
+    .stat-dot { font-size: 5px; margin: 0 1px; }
+    .countdown-box { padding: 12px 14px; font-size: 12px; border-radius: 16px; letter-spacing: 1.5px; }
+    .countdown-box strong { font-size: 17px; }
+    .hint { font-size: 10px; margin-top: 18px; letter-spacing: 1px; }
+
+    /* 按钮 */
+    .music-btn { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 18px; border-radius: 50%; }
+    .mailbox-btn { bottom: 20px; right: 12px; width: 40px; height: 40px; font-size: 20px; }
+    .mailbox-btn .badge { top: -3px; right: -3px; font-size: 9px; min-width: 16px; height: 16px; }
+
+    /* 来访提醒 */
+    .visitor-indicator { top: 12px; left: 12px; gap: 0; }
+    .visitor-dot { width: 36px; height: 36px; font-size: 16px; }
+    .visitor-label { display: none; }
+
+    /* 信箱 */
+    .mailbox-container { width: 94%; max-height: 82vh; border-radius: 20px; }
+    .mailbox-header { padding: 18px 20px 12px; }
+    .mailbox-title { font-size: 16px; letter-spacing: 2px; }
+    .mailbox-list { padding: 12px 16px; gap: 10px; }
+    .envelope { padding: 12px 14px; border-radius: 14px; gap: 10px; }
+    .envelope-icon { font-size: 26px; }
+    .envelope-title { font-size: 14px; }
+    .envelope-author { font-size: 11px; }
+    .envelope-date { font-size: 10px; }
+    .mailbox-footer { padding: 10px 16px 16px; }
+    .mailbox-compose-btn { font-size: 14px; padding: 12px; letter-spacing: 1.5px; }
+
+    /* 写信 */
+    .compose-panel { padding: 14px 16px; gap: 10px; }
+    .compose-author-btn { padding: 7px 16px; font-size: 13px; letter-spacing: 1.5px; }
+    .compose-input { font-size: 14px; padding: 10px 14px; }
+    .compose-textarea { font-size: 13px; padding: 10px 14px; }
+    .compose-send { font-size: 14px; padding: 10px; letter-spacing: 1.5px; }
+    .compose-cancel { font-size: 13px; padding: 10px 16px; }
+
+    /* 信件详情 */
+    .letter-view { padding: 22px 18px 16px; }
+    .letter-view-icon { font-size: 40px; }
+    .letter-view-title { font-size: 18px; }
+    .letter-view-body { font-size: 14px; line-height: 1.9; }
+    .letter-view-back { font-size: 13px; padding: 8px 22px; }
+
+    /* 照片缩小 */
+    .photo { border-radius: 8px; border-width: 2px; }
+    .photo-wrapper { animation-duration: 8s !important; }
+  }
+
+  @media (max-width: 360px) {
+    .card { padding: 22px 12px 20px; }
+    .couple-name { font-size: 16px; letter-spacing: 0.5px; padding: 2px 4px; }
+    .couple-heart { font-size: 20px; }
+    .couple { gap: 4px; }
+    .main-days { font-size: 40px; }
+    .stat-row { font-size: 10px; gap: 1px; }
+    .stat-row .num { font-size: 11px; }
+    .countdown-box { font-size: 11px; padding: 10px 12px; }
+    .countdown-box strong { font-size: 15px; }
+    .hint { font-size: 9px; }
+    .music-btn { top: 8px; right: 8px; width: 34px; height: 34px; font-size: 16px; }
+    .visitor-indicator { top: 8px; left: 8px; }
+    .visitor-dot { width: 32px; height: 32px; font-size: 14px; }
+    .mailbox-btn { bottom: 16px; right: 8px; width: 36px; height: 36px; font-size: 18px; }
   }
 </style>
 </head>
@@ -446,8 +515,8 @@ function spawnPetal() {
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 27000);
 }
-for (let i = 0; i < 16; i++) { setTimeout(spawnPetal, i * 350); }
-setInterval(spawnPetal, 2000);
+for (let i = 0; i < (window.innerWidth < 480 ? 8 : 16); i++) { setTimeout(spawnPetal, i * 350); }
+setInterval(spawnPetal, window.innerWidth < 480 ? 3500 : 2000);
 
 // falling photos
 function spawnPhoto() {
@@ -461,7 +530,8 @@ function spawnPhoto() {
   const img = document.createElement('img');
   img.className = 'photo';
   img.src = src;
-  const size = 50 + Math.random() * 45;
+  const isMobile = window.innerWidth < 480;
+  const size = isMobile ? (35 + Math.random() * 30) : (50 + Math.random() * 45);
   img.style.width = size + 'px';
   img.style.height = size + 'px';
   img.style.animationName = Math.random() > 0.5 ? 'photoSwayR' : 'photoSwayL';

@@ -34,7 +34,7 @@ function spawnPhoto() {
   img.className = 'photo';
   img.src = src;
   var isMobile = window.innerWidth < 480;
-  var size = isMobile ? (45 + Math.random() * 35) : (65 + Math.random() * 50);
+  var size = isMobile ? (55 + Math.random() * 45) : (65 + Math.random() * 50);
   img.style.width = size + 'px';
   img.style.height = size + 'px';
   img.style.animationName = Math.random() > 0.5 ? 'photoSwayR' : 'photoSwayL';

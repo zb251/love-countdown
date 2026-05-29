@@ -510,7 +510,7 @@
     <!-- 动态填充 -->
   </div>
 </div>
-<audio id="bgMusic" loop preload="auto" style="display:none"></audio>
+<audio id="bgMusic" loop preload="none" style="display:none"></audio>
 
 <script>
 const START_DATE = new Date('2022-09-22T12:00:00');
@@ -534,9 +534,6 @@ function spawnPetal() {
 }
 for (let i = 0; i < (window.innerWidth < 480 ? 8 : 16); i++) { setTimeout(spawnPetal, i * 350); }
 setInterval(spawnPetal, window.innerWidth < 480 ? 3500 : 2000);
-
-// 预加载所有照片到缓存，避免飘落时网络慢显示不出来
-PHOTOS.forEach(src => { const pre = new Image(); pre.src = src; });
 
 // falling photos
 function spawnPhoto() {

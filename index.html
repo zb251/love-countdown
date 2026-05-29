@@ -643,10 +643,11 @@ setInterval(update, 1000);
 	});
 
 	// --- 信箱 ---
+	const PRESET_BASE = new Date('2025-09-22T12:00:00').getTime();
 	const PRESET_LETTERS = [
-	  { author: '张彬', title: '遇见你', text: '遇见你之前，我不知道时间可以过得这么快，又这么慢。快的是和你在一起的每一天，慢的是等待下一次见你的每一秒。', time: Date.now() - 86400000*270 },
-	  { author: '李书瑶', title: '因为是你', text: '有人说爱情是化学反应，有人说爱情是缘分注定。我觉得都不对——爱情就是你。你就是那个让一切变得合理的原因。', time: Date.now() - 86400000*180 },
-	  { author: '张彬', title: '平行宇宙', text: '有时候我在想，如果平行宇宙真的存在，那在每一个宇宙里，我一定都会找到你，然后重新爱上你。', time: Date.now() - 86400000*90 },
+	  { author: '张彬', title: '遇见你', text: '遇见你之前，我不知道时间可以过得这么快，又这么慢。快的是和你在一起的每一天，慢的是等待下一次见你的每一秒。', time: PRESET_BASE - 86400000*270 },
+	  { author: '李书瑶', title: '因为是你', text: '有人说爱情是化学反应，有人说爱情是缘分注定。我觉得都不对——爱情就是你。你就是那个让一切变得合理的原因。', time: PRESET_BASE - 86400000*180 },
+	  { author: '张彬', title: '平行宇宙', text: '有时候我在想，如果平行宇宙真的存在，那在每一个宇宙里，我一定都会找到你，然后重新爱上你。', time: PRESET_BASE - 86400000*90 },
 	];
 
 	function loadLetters() {
@@ -894,8 +895,7 @@ setInterval(update, 1000);
 	      .then(r => r.json())
 	      .then(data => {
 	        const merged = Object.assign({}, data || {}, {
-	          lastVisit: { name: me, time: Date.now(), device: deviceId },
-	          mailbox: mailboxLetters
+	          lastVisit: { name: me, time: Date.now(), device: deviceId }
 	        });
 	        return fetch(CLOUD_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(merged) });
 	      }).catch(() => {});
@@ -979,8 +979,7 @@ setInterval(update, 1000);
 		window.addEventListener('beforeunload', () => {
 			if (me) {
 				localStorage.setItem('local_last_visit', JSON.stringify({ name: me, time: Date.now() }));
-				const payload = JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId }, mailbox: mailboxLetters });
-				try { navigator.sendBeacon(CLOUD_URL, new Blob([payload], {type:'application/json'})); } catch(e) {}
+				try { fetch(CLOUD_URL, { method: 'PUT', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lastVisit: { name: me, time: Date.now(), device: deviceId } }) }); } catch(e) {}
 			}
 		});
 	})();

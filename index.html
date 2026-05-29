@@ -101,6 +101,11 @@
     100% { transform: translateY(-140px) scale(0.2); opacity: 0; }
   }
 
+  @keyframes cardBreath {
+    0%, 100% { box-shadow: 0 8px 40px rgba(196,68,105,0.12), 0 2px 8px rgba(196,68,105,0.08), 0 0 30px rgba(248,165,194,0.15), inset 0 1px 0 rgba(255,255,255,0.7); }
+    50%      { box-shadow: 0 8px 60px rgba(196,68,105,0.22), 0 2px 12px rgba(196,68,105,0.14), 0 0 60px rgba(248,165,194,0.35), inset 0 1px 0 rgba(255,255,255,0.7); }
+  }
+
   .card {
     position: relative;
     z-index: 1;
@@ -109,11 +114,12 @@
     -webkit-backdrop-filter: blur(24px);
     border-radius: 36px;
     padding: 50px 48px;
-    box-shadow: 0 8px 40px rgba(196,68,105,0.12), 0 2px 8px rgba(196,68,105,0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+    box-shadow: 0 8px 40px rgba(196,68,105,0.12), 0 2px 8px rgba(196,68,105,0.08), 0 0 30px rgba(248,165,194,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
     text-align: center;
     max-width: 560px;
     width: 92%;
     border: 1px solid rgba(248,165,194,0.25);
+    animation: cardBreath 4s ease-in-out infinite;
   }
 
   .couple {

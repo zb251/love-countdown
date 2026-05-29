@@ -708,8 +708,8 @@ setInterval(update, 1000);
 	let mailboxLetters = loadLetters();
 	if (!mailboxLetters) { mailboxLetters = [...PRESET_LETTERS]; saveLetters(mailboxLetters); }
 	// 首次从云端拉取
-	setTimeout(() => { syncMailboxFromCloud(); }, 3000);
-	setInterval(() => { syncMailboxFromCloud(); }, 15000);
+	setTimeout(() => { syncMailboxFromCloud(); }, 5000);
+	setInterval(() => { syncMailboxFromCloud(); }, 60000);
 
 	const mailboxOverlay = document.getElementById('mailboxOverlay');
 	const mailboxContainer = document.getElementById('mailboxContainer');
@@ -976,8 +976,8 @@ setInterval(update, 1000);
 
 	  checkLocal();
 	  // 首次延迟检查云端（等 blob 创建完成）
-	  setTimeout(() => { checkCloud(); }, 2000);
-	  setInterval(() => { checkLocal(); checkCloud(); }, 20000);
+	  setTimeout(() => { checkCloud(); }, 4000);
+	  setInterval(() => { checkLocal(); checkCloud(); }, 60000);
 
 		window.addEventListener('beforeunload', () => {
 			if (me) {
